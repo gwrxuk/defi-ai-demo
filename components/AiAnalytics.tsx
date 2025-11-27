@@ -28,6 +28,24 @@ export function AiAnalytics() {
   const [activeToken, setActiveToken] = useState<'ETH' | 'BTC'>('ETH');
   const [loading, setLoading] = useState(false);
 
+  const [chartData, setChartData] = useState<any[]>(MOCK_DATA.ETH);
+  
+  // Fetch real market data when token changes
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`/api/market-data?token=${activeToken}`);
+        const result = await res.json();
+        if (result.data) {
+          setChartData(result.data);
+        }
+      } catch (e) {
+        console.error("Failed to fetch market data", e);
+      }
+    };
+    fetchData();
+  }, [activeToken]);
+
   const handleSend = async () => {
     if (!input.trim()) return;
     
@@ -116,7 +134,7 @@ export function AiAnalytics() {
         </h3>
         <div className="flex-1 w-full min-h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={MOCK_DATA[activeToken]}>
+            <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#333" />
               <XAxis dataKey="day" stroke="#666" tick={{fontSize: 12}} />
               <YAxis domain={['auto', 'auto']} stroke="#666" tick={{fontSize: 12}} />
