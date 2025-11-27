@@ -38,10 +38,11 @@ export async function POST(req: Request) {
       token: detectedToken
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('OpenAI API Error:', error);
+    const errorMessage = error?.message || error?.error?.message || 'Unknown error';
     return NextResponse.json(
-      { error: 'Failed to process request' },
+      { error: `Failed to process request: ${errorMessage}` },
       { status: 500 }
     );
   }
