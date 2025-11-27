@@ -3,12 +3,13 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function POST(req: Request) {
   try {
+    // Lazy initialize to avoid build-time errors if env var is missing
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY || 'dummy-key',
+    });
+
     const { message } = await req.json();
 
     const completion = await openai.chat.completions.create({
