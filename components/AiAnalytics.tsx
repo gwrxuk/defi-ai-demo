@@ -61,7 +61,10 @@ export function AiAnalytics() {
         body: JSON.stringify({ message: userMsg }),
       });
 
-      if (!res.ok) throw new Error('Failed to fetch response');
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Server error: ${res.status}`);
+      }
 
       const data = await res.json();
       
@@ -70,8 +73,9 @@ export function AiAnalytics() {
       }
 
       setMessages(prev => [...prev, { role: 'assistant', content: data.response || "I apologize, but I couldn't generate a response." }]);
-    } catch (error) {
-      setMessages(prev => [...prev, { role: 'assistant', content: "Sorry, I'm having trouble connecting to the AI server right now. Please check your API key." }]);
+    } catch (error: any) {
+      console.error(error);
+      setMessages(prev => [...prev, { role: 'assistant', content: `Error: ${error.message || "Connection failed"}. Please check your API key.` }]);
     } finally {
       setLoading(false);
     }
