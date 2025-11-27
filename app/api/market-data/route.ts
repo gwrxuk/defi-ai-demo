@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || 'YourApiKeyToken';
+const ETHERSCAN_API_KEY = "912TDYTYT3477C6ZHRG55UJDH8C9FC6ZYG";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);

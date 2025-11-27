@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   try {
     // Lazy initialize to avoid build-time errors if env var is missing
     const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY || 'dummy-key',
+      apiKey: "sk-rag-GFjIx8y1cWMWRwR8gavGT3BlbkFJhYZZozxsGtI6EJVyh31l",
     });
 
     const { message } = await req.json();
