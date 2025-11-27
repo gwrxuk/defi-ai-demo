@@ -36,23 +36,27 @@ export function AiAnalytics() {
     setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
     setLoading(true);
 
-    // Simulate LLM processing
-    setTimeout(() => {
-      let response = "I can currently analyze ETH and BTC. Please ask about those.";
-      let token = activeToken;
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userMsg }),
+      });
 
-      if (userMsg.toLowerCase().includes('eth')) {
-        response = "Analyzing Ethereum (ETH)... \n\nBased on recent on-chain flows and technical indicators, ETH is showing strong momentum. The VWAP supports a bullish trend, and smart money inflows on DEXs have increased by 15% in the last 24h. I've plotted the 30-day trend for you.";
-        token = 'ETH';
-      } else if (userMsg.toLowerCase().includes('btc')) {
-        response = "Analyzing Bitcoin (BTC)... \n\nBitcoin remains resilient above key support levels. Miner capitulation risk is low, and social sentiment is currently neutral-positive. The chart indicates a consolidation phase followed by a potential breakout.";
-        token = 'BTC';
+      if (!res.ok) throw new Error('Failed to fetch response');
+
+      const data = await res.json();
+      
+      if (data.token) {
+        setActiveToken(data.token);
       }
 
-      setActiveToken(token);
-      setMessages(prev => [...prev, { role: 'assistant', content: response }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: data.response || "I apologize, but I couldn't generate a response." }]);
+    } catch (error) {
+      setMessages(prev => [...prev, { role: 'assistant', content: "Sorry, I'm having trouble connecting to the AI server right now. Please check your API key." }]);
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   return (
