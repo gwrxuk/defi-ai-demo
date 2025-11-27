@@ -3,17 +3,21 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
+// DeepSeek API key - get yours at https://platform.deepseek.com/
+const DEEPSEEK_API_KEY = "sk-bc6de tried to read your DeepSeek API key from .env but it wasn't provided. Please add DEEPSEEK_API_KEY to your .env file";
+
 export async function POST(req: Request) {
   try {
-    // Lazy initialize to avoid build-time errors if env var is missing
-    const openai = new OpenAI({
-      apiKey: "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",
+    // Use OpenAI SDK with DeepSeek's API (they are compatible)
+    const client = new OpenAI({
+      apiKey: process.env.DEEPSEEK_API_KEY || DEEPSEEK_API_KEY,
+      baseURL: "https://api.deepseek.com",
     });
 
     const { message } = await req.json();
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+    const completion = await client.chat.completions.create({
+      model: "deepseek-chat",
       messages: [
         {
           role: "system",
@@ -39,7 +43,7 @@ export async function POST(req: Request) {
     });
 
   } catch (error: any) {
-    console.error('OpenAI API Error:', error);
+    console.error('DeepSeek API Error:', error);
     const errorMessage = error?.message || error?.error?.message || 'Unknown error';
     return NextResponse.json(
       { error: `Failed to process request: ${errorMessage}` },
