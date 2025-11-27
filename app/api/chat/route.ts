@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   try {
     // Lazy initialize to avoid build-time errors if env var is missing
     const openai = new OpenAI({
-      apiKey: "sk-rag-GFjIx8y1cWMWRwR8gavGT3BlbkFJhYZZozxsGtI6EJVyh31l",
+      apiKey: "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",
     });
 
     const { message } = await req.json();
